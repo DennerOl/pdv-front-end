@@ -1,0 +1,15 @@
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .left-section,
+  .right-section {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .product-list table {
+    font-size: 12px;
+  }
+}

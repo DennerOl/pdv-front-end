@@ -1,0 +1,52 @@
+.card {
+  background-color: #f0f0f0; // Fundo cinza
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para efeito de card
+  margin: 20px;
+  padding: 15px;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+    .main-content {
+      display: flex;
+      flex: 1;
+      padding: 10px;
+
+      .left-section {
+        flex: 1;
+        border: 1px solid #000; // Bordas pretas
+        border-radius: 5px;
+        padding: 10px;
+        margin: 5px;
+      }
+
+      .right-section {
+        flex: 2;
+        border: 1px solid #000; // Bordas pretas
+        border-radius: 5px;
+        padding: 10px;
+        margin: 5px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    .container {
+      .main-content {
+        flex-direction: column;
+
+        .left-section,
+        .right-section {
+          flex: none;
+          width: 100%;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}

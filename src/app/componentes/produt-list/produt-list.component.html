@@ -1,0 +1,38 @@
+<div class="product-list">
+  <h4>F8 - Editar Produtos</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Preço Unitário</th>
+        <th>Subtotal</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of products">
+        <td data-label="Produto">{{ item.name }}</td>
+        <td data-label="Quantidade">
+          <input type="number" [(ngModel)]="item.quantity" min="1" />
+        </td>
+        <td data-label="Preço Unitário">
+          R$ {{ item.price | number : "1.2-2" }}
+        </td>
+        <td data-label="Subtotal">
+          R$ {{ getSubtotal(item) | number : "1.2-2" }}
+        </td>
+        <td data-label="Ação">
+          <img
+            class="trash-icon"
+            (click)="removeItem(item)"
+            src="/assets/imagens/imagemLixo.svg"
+            alt="Remover item"
+            width="16"
+            height="16"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

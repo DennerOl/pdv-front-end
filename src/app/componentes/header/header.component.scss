@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+}
+
+.logo img {
+  width: 100px;
+  height: auto;
+}
+
+.user-info span {
+  font-size: 12px;
+}
+
+.user-info h3 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.info span {
+  font-size: 12px;
+  margin-right: 10px;
+}
+
+.actions i {
+  font-size: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}

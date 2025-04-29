@@ -1,0 +1,107 @@
+.product-list {
+  border: 1px solid #000; // Bordas pretas
+  padding: 5px;
+
+  h4 {
+    margin-top: 0;
+    font-size: 1.2rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+
+    th,
+    td {
+      border: 1px solid #000; // Bordas pretas
+      padding: 10px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    th {
+      background-color: #f0f0f0; // Fundo cinza claro para cabeçalho
+    }
+
+    td {
+      .fa-trash-alt {
+        cursor: pointer;
+        color: #ff0000; // Vermelho para o ícone de lixeira
+        font-size: 1.1rem;
+
+        &:hover {
+          color: #cc0000; // Escurece ao passar o mouse
+        }
+      }
+    }
+
+    input {
+      padding: 5px;
+      border: 1px solid #000; // Bordas pretas
+      border-radius: 4px;
+      width: 60px;
+      text-align: center;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .product-list {
+    padding: 3px;
+
+    h4 {
+      font-size: 1rem;
+    }
+
+    table {
+      // Transforma a tabela em blocos para melhor responsividade
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+
+      thead {
+        display: none; // Esconde o cabeçalho em telas pequenas
+      }
+
+      tbody {
+        display: block;
+
+        tr {
+          display: block;
+          margin-bottom: 10px;
+          border: 1px solid #000;
+          border-radius: 4px;
+          padding: 5px;
+          background-color: #fff;
+
+          td {
+            display: block;
+            text-align: left;
+            border: none;
+            padding: 5px;
+            font-size: 0.9rem;
+
+            // Adiciona rótulos para clareza
+            &:before {
+              content: attr(data-label);
+              font-weight: bold;
+              display: inline-block;
+              width: 100px;
+            }
+
+            // Ajusta o input e o ícone
+            input {
+              width: 50px;
+              font-size: 0.9rem;
+            }
+
+            .fa-trash-alt {
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
