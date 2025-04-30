@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ProductService } from '../services/product.service';
+import { Product } from '../../types/types';
 
 @Component({
   selector: 'app-produt-list',
@@ -11,18 +12,15 @@ export class ProdutListComponent {
 
   constructor(private productService: ProductService) {}
 
-  getSubtotal(item: { name: string; quantity: number; price: number }): number {
+  getSubtotal(item: Product): number {
     return item.quantity * item.price;
   }
 
-  removeItem(item: { name: string; quantity: number; price: number }): void {
+  removeItem(item: Product): void {
     this.productService.removeItem(item);
   }
 
-  updateQuantity(
-    item: { name: string; quantity: number; price: number },
-    quantity: number
-  ): void {
+  updateQuantity(item: Product, quantity: number): void {
     this.productService.updateQuantity(item, quantity);
   }
 }

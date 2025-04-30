@@ -1,51 +1,60 @@
 .card {
   background-color: #f0f0f0; // Fundo cinza
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para efeito de card
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 20px;
   padding: 15px;
+}
 
-  .container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // Garante altura total da viewport
+  overflow: hidden; // Evita sobreposição indesejada
+}
 
-    .main-content {
-      display: flex;
-      flex: 1;
-      padding: 10px;
+app-header {
+  flex: 0 0 auto; // Header não expande
+  z-index: 10; // Garante que o header fique acima do main
+}
 
-      .left-section {
-        flex: 1;
-        border: 1px solid #000; // Bordas pretas
-        border-radius: 5px;
-        padding: 10px;
-        margin: 5px;
-      }
+.main-content {
+  display: flex;
+  flex: 1; // Ocupa o espaço restante
+  padding: 10px;
+  overflow: auto; // Permite rolagem se necessário
+}
 
-      .right-section {
-        flex: 2;
-        border: 1px solid #000; // Bordas pretas
-        border-radius: 5px;
-        padding: 10px;
-        margin: 5px;
-      }
-    }
-  }
+.left-section {
+  flex: 1;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+}
+
+.right-section {
+  flex: 2;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+}
+
+app-footer {
+  flex: 0 0 auto; // Footer não expande
 }
 
 @media (max-width: 768px) {
-  .card {
-    .container {
-      .main-content {
-        flex-direction: column;
+  .container {
+    .main-content {
+      flex-direction: column;
 
-        .left-section,
-        .right-section {
-          flex: none;
-          width: 100%;
-          margin-bottom: 10px;
-        }
+      .left-section,
+      .right-section {
+        flex: none;
+        width: 100%;
+        margin-bottom: 10px;
       }
     }
   }
