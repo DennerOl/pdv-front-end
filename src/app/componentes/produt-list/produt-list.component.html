@@ -11,10 +11,15 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of products">
+      <tr *ngFor="let item of products$ | async">
         <td data-label="Produto">{{ item.name }}</td>
         <td data-label="Quantidade">
-          <input type="number" [(ngModel)]="item.quantity" min="1" />
+          <input
+            type="number"
+            [(ngModel)]="item.quantity"
+            (ngModelChange)="updateQuantity(item, $event)"
+            min="1"
+          />
         </td>
         <td data-label="Preço Unitário">
           R$ {{ item.price | number : "1.2-2" }}

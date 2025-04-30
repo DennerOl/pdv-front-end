@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ProductService } from '../services/product.service';
 
 @Component({
   selector: 'app-produt-list',
@@ -6,21 +7,22 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./produt-list.component.scss'],
 })
 export class ProdutListComponent {
-  @Input() products: { name: string; quantity: number; price: number }[] = [
-    { name: 'Produto A', quantity: 1, price: 50.0 },
-    { name: 'Produto B', quantity: 2, price: 75.0 },
-    { name: 'Produto C', quantity: 1, price: 50.0 },
-    { name: 'Produto D', quantity: 2, price: 75.0 },
-    { name: 'Produto E', quantity: 1, price: 50.0 },
-    { name: 'Produto F', quantity: 2, price: 75.0 },
-  ];
+  products$ = this.productService.products$;
 
-  // Método para calcular o subtotal dinamicamente
-  getSubtotal(item: any): number {
+  constructor(private productService: ProductService) {}
+
+  getSubtotal(item: { name: string; quantity: number; price: number }): number {
     return item.quantity * item.price;
   }
 
-  removeItem(item: any): void {
-    this.products = this.products.filter((p) => p !== item);
+  removeItem(item: { name: string; quantity: number; price: number }): void {
+    this.productService.removeItem(item);
+  }
+
+  updateQuantity(
+    item: { name: string; quantity: number; price: number },
+    quantity: number
+  ): void {
+    this.productService.updateQuantity(item, quantity);
   }
 }

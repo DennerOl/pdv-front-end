@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ProductService } from '../services/product.service';
 
 @Component({
   selector: 'app-payment-options',
@@ -6,12 +7,11 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./payment-options.component.scss'],
 })
 export class PaymentOptionsComponent {
-  @Input() products: { name: string; quantity: number; price: number }[] = [];
+  constructor(private productService: ProductService) {}
 
   getTotal(): number {
-    return this.products.reduce(
-      (total, item) => total + item.quantity * item.price,
-      0
-    );
+    return this.productService
+      .getProducts()
+      .reduce((total, item) => total + item.quantity * item.price, 0);
   }
 }
