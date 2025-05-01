@@ -1,67 +1,91 @@
 .product-list {
-  border: 1px solid #000; // Bordas pretas
-  padding: 5px;
+  padding: 10px;
+  background-color: #ffffff; // Fundo branco para tabela clean
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); // Sombra sutil
+  font-family: "Roboto", sans-serif; // Tipografia profissional
 
   h4 {
-    margin-top: 0;
-    font-size: 1.2rem;
+    margin: 0 0 10px;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #2c3e50;
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 5px;
+    background-color: #f9fafb; // Fundo claro para tabela
 
     th,
     td {
-      border: 1px solid #000; // Bordas pretas
-      padding: 10px;
-      text-align: center;
+      padding: 12px;
+      text-align: left;
       font-size: 1rem;
+      color: #34495e;
     }
 
     th {
-      background-color: #f0f0f0; // Fundo cinza claro para cabeçalho
+      background-color: #3498db; // Cabeçalho com azul moderno
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #2980b9;
     }
 
     td {
-      .fa-trash-alt {
+      border-bottom: 1px solid #e0e0e0; // Bordas suaves
+      transition: background-color 0.2s ease;
+
+      .trash-icon {
         cursor: pointer;
-        color: #ff0000; // Vermelho para o ícone de lixeira
-        font-size: 1.1rem;
+        transition: transform 0.2s ease;
 
         &:hover {
-          color: #cc0000; // Escurece ao passar o mouse
+          transform: scale(1.2); // Efeito de zoom no hover
+        }
+      }
+
+      input {
+        padding: 6px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        width: 60px;
+        text-align: center;
+        font-size: 0.9rem;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          border-color: #3498db;
+          outline: none;
         }
       }
     }
 
-    input {
-      padding: 5px;
-      border: 1px solid #000; // Bordas pretas
-      border-radius: 4px;
-      width: 60px;
-      text-align: center;
+    tr {
+      &:hover {
+        background-color: #f1f5f9; // Efeito hover nas linhas
+      }
     }
   }
 }
 
 @media (max-width: 768px) {
   .product-list {
-    padding: 3px;
+    padding: 8px;
 
     h4 {
-      font-size: 1rem;
+      font-size: 1.2rem;
     }
 
     table {
-      // Transforma a tabela em blocos para melhor responsividade
       display: block;
       overflow-x: auto;
       white-space: nowrap;
 
       thead {
-        display: none; // Esconde o cabeçalho em telas pequenas
+        display: none; // Esconde cabeçalho em telas pequenas
       }
 
       tbody {
@@ -69,35 +93,35 @@
 
         tr {
           display: block;
-          margin-bottom: 10px;
-          border: 1px solid #000;
-          border-radius: 4px;
-          padding: 5px;
+          margin-bottom: 12px;
+          border: 1px solid #e0e0e0;
+          border-radius: 6px;
           background-color: #fff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
           td {
             display: block;
             text-align: left;
             border: none;
-            padding: 5px;
+            padding: 8px;
             font-size: 0.9rem;
 
-            // Adiciona rótulos para clareza
             &:before {
               content: attr(data-label);
-              font-weight: bold;
+              font-weight: 600;
+              color: #2c3e50;
               display: inline-block;
               width: 100px;
             }
 
-            // Ajusta o input e o ícone
             input {
               width: 50px;
-              font-size: 0.9rem;
+              font-size: 0.85rem;
             }
 
-            .fa-trash-alt {
-              font-size: 1rem;
+            .trash-icon {
+              width: 14px;
+              height: 14px;
             }
           }
         }

@@ -21,6 +21,11 @@ export class ProductService {
     return this.productsSubject.getValue();
   }
 
+  addProduct(product: { name: string; quantity: number; price: number }): void {
+    const currentProducts = this.productsSubject.getValue();
+    this.productsSubject.next([...currentProducts, product]);
+  }
+
   removeItem(item: Product): void {
     const currentProducts = this.productsSubject.getValue();
     this.productsSubject.next(currentProducts.filter((p) => p !== item));

@@ -1,8 +1,23 @@
 <div class="search-bar">
-  <label>Código do produto - F1 Localizar Produto</label>
-  <div class="search-input-container">
-    <input type="text" placeholder="Digite o código do produto" />
-    <i class="fa fa-search"></i>
-    <!-- Ícone de lupa -->
+  <input
+    type="text"
+    placeholder="Buscar produto..."
+    [(ngModel)]="searchQuery"
+    (ngModelChange)="filterProducts()"
+    (keydown.enter)="selectFirstProduct()"
+  />
+  <button (click)="clearSearch()">
+    <i class="fas fa-search"></i>
+  </button>
+  <div class="dropdown" *ngIf="filteredProducts.length && searchQuery">
+    <div
+      class="dropdown-item"
+      *ngFor="let product of filteredProducts"
+      (click)="selectProduct(product)"
+    >
+      <span class="code">{{ product.code }}</span>
+      <span class="description">{{ product.description }}</span>
+      <span class="price">R$ {{ product.price | number : "1.2-2" }}</span>
+    </div>
   </div>
 </div>

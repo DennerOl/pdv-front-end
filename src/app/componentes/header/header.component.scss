@@ -1,23 +1,51 @@
 .header {
-  background-color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 5px;
+  background: linear-gradient(
+    135deg,
+    #2c3e50 0%,
+    #080808 100%
+  ); // Gradiente moderno
   color: white;
-  padding: 10px;
+  padding: 15px 20px;
   width: 100%;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Sombra suave
+  transition: all 0.3s ease; // Transição suave para interações
 
   .logo {
+    display: flex;
+    align-items: center;
+
     span {
-      font-size: 25px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: "Roboto", sans-serif; // Tipografia moderna
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05); // Efeito sutil ao passar o mouse
+      }
     }
+  }
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); // Sombra mais forte no hover
   }
 }
 
 @media (max-width: 768px) {
   .header {
-    padding: 8px;
+    padding: 10px 15px;
 
     .logo {
       span {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
       }
     }
   }
