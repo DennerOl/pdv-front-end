@@ -1,14 +1,201 @@
 <div class="payment-options">
   <div class="total-value">
     <p>Valor Total (R$)</p>
-    <h2>{{ getTotal() | number : "1.2-2" }}</h2>
+    <h2>{{ total | number : "1.2-2" }}</h2>
   </div>
   <div class="buttons">
-    <button>F2 - Dinheiro</button>
-    <button>F3 - Cheque</button>
-    <button>F4 - Cartão</button>
-    <button>F5 - Ticket</button>
-    <button>F6 - Parcelado</button>
-    <button>F7 - Vale</button>
+    <button (click)="openPaymentModal('cash')">F2 - Dinheiro</button>
+    <button (click)="openPaymentModal('check')">F3 - Cheque</button>
+    <button (click)="openPaymentModal('card')">F4 - Cartão</button>
+    <button (click)="openPaymentModal('ticket')">F5 - Ticket</button>
+    <button (click)="openPaymentModal('installment')">F6 - Parcelado</button>
+    <button (click)="openPaymentModal('voucher')">F7 - Vale</button>
+  </div>
+</div>
+
+<div class="modal" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>
+        Finalizar Compra -
+        {{
+          paymentType === "cash"
+            ? "Dinheiro"
+            : paymentType === "card"
+            ? "Cartão"
+            : paymentType === "check"
+            ? "Cheque"
+            : paymentType === "ticket"
+            ? "Ticket"
+            : paymentType === "installment"
+            ? "Parcelado"
+            : "Vale"
+        }}
+      </h3>
+      <button class="close-btn" (click)="closePaymentModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Resumo da Compra -->
+      <div class="summary">
+        <h4>Resumo da Compra</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Quantidade</th>
+              <th>Preço Unitário</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of products">
+              <td data-label="Produto">{{ item.name }}</td>
+              <td data-label="Quantidade">{{ item.quantity }}</td>
+              <td data-label="Preço Unitário">
+                R$ {{ item.price | number : "1.2-2" }}
+              </td>
+              <td data-label="Subtotal">
+                R$ {{ item.quantity * item.price | number : "1.2-2" }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="total">Subtotal: R$ {{ total | number : "1.2-2" }}</p>
+        <p class="total" *ngIf="discount > 0">
+          Desconto: R$ {{ discount | number : "1.2-2" }}
+        </p>
+        <p class="total">
+          Total com Desconto: R$ {{ totalWithDiscount | number : "1.2-2" }}
+        </p>
+      </div>
+
+      <!-- Identificação do Cliente -->
+      <div class="customer">
+        <h4>Cliente</h4>
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="isAnonymous"
+            (ngModelChange)="toggleAnonymous()"
+          />
+          Consumidor não identificado
+        </label>
+        <div *ngIf="!isAnonymous" class="customer-fields">
+          <label>
+            Nome:
+            <input
+              type="text"
+              placeholder="Nome do cliente"
+              [(ngModel)]="customerName"
+            />
+          </label>
+          <label>
+            CPF:
+            <input
+              type="text"
+              placeholder="000.000.000-00"
+              [(ngModel)]="customerCpf"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- Pagamento em Dinheiro -->
+      <div class="payment-details" *ngIf="paymentType === 'cash'">
+        <h4>Pagamento em Dinheiro</h4>
+        <label>
+          Desconto (R$):
+          <input
+            type="number"
+            [(ngModel)]="discount"
+            (ngModelChange)="updateDiscount()"
+            min="0"
+            step="0.01"
+          />
+        </label>
+        <label>
+          Valor Pago (R$):
+          <input
+            type="number"
+            [(ngModel)]="amountPaid"
+            (ngModelChange)="calculateChange()"
+            min="0"
+            step="0.01"
+          />
+        </label>
+        <p *ngIf="amountPaid >= totalWithDiscount">
+          Troco: R$ {{ change | number : "1.2-2" }}
+        </p>
+        <p *ngIf="amountPaid < totalWithDiscount" class="error">
+          Valor insuficiente
+        </p>
+      </div>
+
+      <!-- Pagamento em Cartão -->
+      <div class="payment-details" *ngIf="paymentType === 'card'">
+        <h4>Pagamento em Cartão</h4>
+        <label>
+          Tipo:
+          <select [(ngModel)]="cardType" (ngModelChange)="resetInstallments()">
+            <option value="debit">Débito</option>
+            <option value="credit">Crédito</option>
+          </select>
+        </label>
+        <label *ngIf="cardType === 'debit'">
+          Desconto (R$):
+          <input
+            type="number"
+            [(ngModel)]="discount"
+            (ngModelChange)="updateDiscount()"
+            min="0"
+            step="0.01"
+          />
+        </label>
+        <label *ngIf="cardType === 'credit'">
+          Número de Parcelas:
+          <select
+            [(ngModel)]="installments"
+            (ngModelChange)="calculateInstallmentValue()"
+          >
+            <option *ngFor="let n of installmentOptions" [value]="n">
+              {{ n }}x
+            </option>
+          </select>
+        </label>
+        <p *ngIf="cardType === 'credit'">
+          Valor por parcela: R$ {{ installmentValue | number : "1.2-2" }}
+        </p>
+      </div>
+
+      <!-- Outros Tipos de Pagamento (Placeholder) -->
+      <div
+        class="payment-details"
+        *ngIf="paymentType !== 'cash' && paymentType !== 'card'"
+      >
+        <h4>
+          Pagamento em
+          {{
+            paymentType === "check"
+              ? "Cheque"
+              : paymentType === "ticket"
+              ? "Ticket"
+              : paymentType === "installment"
+              ? "Parcelado"
+              : "Vale"
+          }}
+        </h4>
+        <p>Funcionalidade em desenvolvimento.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closePaymentModal()">Cancelar</button>
+      <button
+        class="confirm-btn"
+        (click)="confirmPayment()"
+        [disabled]="!isPaymentValid()"
+      >
+        Confirmar
+      </button>
+    </div>
   </div>
 </div>

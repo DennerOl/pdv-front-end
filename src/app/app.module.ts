@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './componentes/header/header.component';
 import { SearchBarComponent } from './componentes/search-bar/search-bar.component';
-import { ProductDetailsComponent } from './componentes/product-details/product-details.component';
 import { PaymentOptionsComponent } from './componentes/payment-options/payment-options.component';
 import { FooterComponent } from './componentes/footer/footer.component';
 import { ProdutListComponent } from './componentes/produt-list/produt-list.component';
@@ -19,7 +18,6 @@ import { ContainerComponent } from './componentes/container/container.component'
     AppComponent,
     HeaderComponent,
     SearchBarComponent,
-    ProductDetailsComponent,
     PaymentOptionsComponent,
     FooterComponent,
     ProdutListComponent,

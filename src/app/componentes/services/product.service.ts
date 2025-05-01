@@ -17,13 +17,13 @@ export class ProductService {
 
   products$: Observable<Product[]> = this.productsSubject.asObservable();
 
-  getProducts(): { name: string; quantity: number; price: number }[] {
+  getProducts(): Product[] {
     return this.productsSubject.getValue();
   }
 
-  addProduct(product: { name: string; quantity: number; price: number }): void {
+  addProduct(item: Product): void {
     const currentProducts = this.productsSubject.getValue();
-    this.productsSubject.next([...currentProducts, product]);
+    this.productsSubject.next([...currentProducts, item]);
   }
 
   removeItem(item: Product): void {
@@ -37,5 +37,9 @@ export class ProductService {
       p === item ? { ...p, quantity } : p
     );
     this.productsSubject.next(updatedProducts);
+  }
+
+  clearProducts(): void {
+    this.productsSubject.next([]);
   }
 }

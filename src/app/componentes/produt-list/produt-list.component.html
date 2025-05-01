@@ -20,6 +20,10 @@
             (ngModelChange)="updateQuantity(item, $event)"
             min="1"
           />
+          <!-- ng model deixa a quantidade sincronizada com item da lista
+           ngModelChange chama a função updateQuantity sempre que o valor do input muda
+
+          -->
         </td>
         <td data-label="Preço Unitário">
           R$ {{ item.price | number : "1.2-2" }}

@@ -1,8 +1,8 @@
 .payment-options {
-  background: #ffffff; // Fundo branco clean
+  background: #ffffff;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); // Sombra sutil
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   font-family: "Roboto", sans-serif;
 
   .total-value {
@@ -20,7 +20,7 @@
       margin: 5px 0 0;
       font-size: 1.8rem;
       font-weight: 700;
-      color: #3498db; // Azul para destaque
+      color: #3498db;
     }
   }
 
@@ -33,11 +33,7 @@
       padding: 12px;
       border: none;
       border-radius: 6px;
-      background: linear-gradient(
-        135deg,
-        #3498db 0%,
-        #2980b9 100%
-      ); // Gradiente azul
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
       color: white;
       font-size: 1rem;
       font-weight: 500;
@@ -46,8 +42,226 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
       &:hover {
-        transform: translateY(-2px); // Elevação no hover
+        transform: translateY(-2px);
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .modal-content {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: "Roboto", sans-serif;
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+
+      h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6b7280;
+
+        &:hover {
+          color: #2c3e50;
+        }
+      }
+    }
+
+    .modal-body {
+      .summary {
+        margin-bottom: 20px;
+
+        h4 {
+          font-size: 1.2rem;
+          color: #2c3e50;
+          margin-bottom: 10px;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background: #f9fafb;
+
+          th,
+          td {
+            padding: 10px;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #34495e;
+          }
+
+          th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 2px solid #2980b9;
+          }
+
+          td {
+            border-bottom: 1px solid #e0e0e0;
+          }
+
+          tr:hover {
+            background: #f1f5f9;
+          }
+        }
+
+        .total {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #2c3e50;
+          text-align: right;
+          margin-top: 10px;
+        }
+      }
+
+      .customer {
+        margin-bottom: 20px;
+
+        h4 {
+          font-size: 1.2rem;
+          color: #2c3e50;
+          margin-bottom: 10px;
+        }
+
+        label {
+          display: block;
+          margin-bottom: 10px;
+          font-size: 1rem;
+          color: #34495e;
+        }
+
+        .customer-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #2c3e50;
+
+            &:focus {
+              border-color: #3498db;
+              outline: none;
+            }
+          }
+        }
+      }
+
+      .payment-details {
+        h4 {
+          font-size: 1.2rem;
+          color: #2c3e50;
+          margin-bottom: 10px;
+        }
+
+        label {
+          display: block;
+          margin-bottom: 10px;
+          font-size: 1rem;
+          color: #34495e;
+        }
+
+        input[type="number"],
+        select {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #d1d5db;
+          border-radius: 4px;
+          font-size: 1rem;
+          color: #2c3e50;
+
+          &:focus {
+            border-color: #3498db;
+            outline: none;
+          }
+        }
+
+        .error {
+          color: #e74c3c;
+          font-size: 0.9rem;
+          margin-top: 5px;
+        }
+
+        p {
+          font-size: 1rem;
+          color: #34495e;
+          margin-top: 10px;
+        }
+      }
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+
+      .cancel-btn,
+      .confirm-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .cancel-btn {
+        background: #6b7280;
+        color: white;
+
+        &:hover {
+          background: #4b5563;
+        }
+      }
+
+      .confirm-btn {
+        background: #3498db;
+        color: white;
+
+        &:hover {
+          background: #2980b9;
+        }
+
+        &:disabled {
+          background: #d1d5db;
+          cursor: not-allowed;
+        }
       }
     }
   }
@@ -68,12 +282,78 @@
     }
 
     .buttons {
-      grid-template-columns: 1fr; // Uma coluna em telas pequenas
+      grid-template-columns: 1fr;
       gap: 8px;
 
       button {
         padding: 10px;
         font-size: 0.9rem;
+      }
+    }
+  }
+
+  .modal {
+    .modal-content {
+      padding: 15px;
+      width: 95%;
+
+      .modal-header {
+        h3 {
+          font-size: 1.2rem;
+        }
+
+        .close-btn {
+          font-size: 1.3rem;
+        }
+      }
+
+      .modal-body {
+        .summary {
+          table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+
+            thead {
+              display: none;
+            }
+
+            tbody {
+              display: block;
+
+              tr {
+                display: block;
+                margin-bottom: 10px;
+                border: 1px solid #e0e0e0;
+                border-radius: 6px;
+                background: #fff;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+                td {
+                  display: block;
+                  text-align: left;
+                  border: none;
+                  padding: 8px;
+                  font-size: 0.85rem;
+
+                  &:before {
+                    content: attr(data-label);
+                    font-weight: 600;
+                    color: #2c3e50;
+                    display: inline-block;
+                    width: 100px;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .customer {
+          .customer-fields {
+            gap: 8px;
+          }
+        }
       }
     }
   }
