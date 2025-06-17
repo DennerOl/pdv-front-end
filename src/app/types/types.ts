@@ -1,7 +1,8 @@
 export interface Product {
-  name: string;
-
-  quantity: number;
-
-  price: number;
+  id: number;
+  nome: string;
+  codigo_principal: string;
+  descricao: string;
+  quantidade: number;
+  precoVenda: number;
 }

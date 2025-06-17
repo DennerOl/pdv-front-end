@@ -1,5 +1,14 @@
 import { Component } from '@angular/core';
+import { Product } from 'src/app/types/types';
 import { ProductService } from '../services/product.service';
+import { NfceService } from '../services/nfce/nfce.service';
+import { ItemNfceDTO } from 'src/app/types/nfceTypes/nfce';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  Subject,
+  Subscription,
+} from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -8,51 +17,65 @@ import { ProductService } from '../services/product.service';
 })
 export class SearchBarComponent {
   searchQuery: string = '';
-  products = [
-    {
-      code: 'P001',
-      description: 'Produto A',
-      barcode: '123456789012',
-      quantity: 10,
-      price: 50.0,
-    },
-    {
-      code: 'P002',
-      description: 'Produto B',
-      barcode: '987654321098',
-      quantity: 5,
-      price: 75.0,
-    },
-    {
-      code: 'P003',
-      description: 'Produto C',
-      barcode: '456789123456',
-      quantity: 8,
-      price: 30.0,
-    },
-  ];
-  filteredProducts = this.products;
+  paginaAtual: number = 0;
+  filteredProducts: Product[] = [];
+  private searchSubject = new Subject<string>();
+  private searchSubscription: Subscription | undefined;
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private nfceService: NfceService
+  ) {}
 
-  filterProducts(): void {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredProducts = this.products.filter(
-      (p) =>
-        p.code.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query) ||
-        p.barcode.includes(query)
-    );
+  ngOnInit(): void {
+    // Configura o debounce para evitar chamadas excessivas
+    this.searchSubscription = this.searchSubject
+      .pipe(
+        debounceTime(300), // Aguarda 300ms após a última digitação
+        distinctUntilChanged() // Evita chamadas repetidas para o mesmo valor
+      )
+      .subscribe((query) => {
+        this.filterProducts(query);
+      });
   }
 
-  selectProduct(product: any): void {
-    this.productService.addProduct({
-      name: product.description,
-      quantity: 1,
-      price: product.price,
-    });
-    this.searchQuery = '';
-    this.filteredProducts = [];
+  ngOnDestroy(): void {
+    // Limpa a assinatura para evitar memory leaks
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  filterProducts(query: string = this.searchQuery): void {
+    if (!query) {
+      this.filteredProducts = [];
+      return;
+    }
+
+    this.productService
+      .getProducts(this.paginaAtual, query)
+      .subscribe((response) => {
+        this.filteredProducts = response.content || [];
+      });
+  }
+
+  /**
+   * Emite a query de busca para o Subject com debounce.
+   */
+  onSearchChange(): void {
+    this.searchSubject.next(this.searchQuery);
+  }
+
+  selectProduct(product: Product): void {
+    const newProduct: ItemNfceDTO = {
+      productId: product.id,
+      codigo_principal: product.codigo_principal,
+      descricao: product.descricao || product.nome,
+      quantidade: 1,
+      precoUnitario: product.precoVenda,
+    };
+    this.nfceService.addProduto(newProduct);
+    this.clearSearch();
   }
 
   selectFirstProduct(): void {

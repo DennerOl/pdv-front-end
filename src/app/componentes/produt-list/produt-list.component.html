@@ -11,13 +11,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of products$ | async">
-        <td data-label="Produto">{{ item.name }}</td>
+      <tr *ngFor="let item of (nfce$ | async)?.itens">
+        <td data-label="Produto">{{ item.descricao }}</td>
         <td data-label="Quantidade">
           <input
             type="number"
-            [(ngModel)]="item.quantity"
-            (ngModelChange)="updateQuantity(item, $event)"
+            [(ngModel)]="item.quantidade"
+            (ngModelChange)="updateQuantity(item)"
             min="1"
           />
           <!-- ng model deixa a quantidade sincronizada com item da lista
@@ -26,7 +26,7 @@
           -->
         </td>
         <td data-label="Preço Unitário">
-          R$ {{ item.price | number : "1.2-2" }}
+          R$ {{ item.precoUnitario | number : "1.2-2" }}
         </td>
         <td data-label="Subtotal">
           R$ {{ getSubtotal(item) | number : "1.2-2" }}

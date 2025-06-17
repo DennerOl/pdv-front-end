@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div class="modal" *ngIf="isModalOpen">
+<div class="modal-overlay" id="payment-modal" *ngIf="isModalOpen">
   <div class="modal-content">
     <div class="modal-header">
       <h3>
@@ -49,13 +49,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of products">
-              <td data-label="Produto">{{ item.name }}</td>
-              <td data-label="Quantidade">{{ item.quantity }}</td>
+              <td data-label="Produto">{{ item.nome }}</td>
+              <td data-label="Quantidade">{{ item.quantidade }}</td>
               <td data-label="Preço Unitário">
-                R$ {{ item.price | number : "1.2-2" }}
+                R$ {{ item.precoVenda | number : "1.2-2" }}
               </td>
               <td data-label="Subtotal">
-                R$ {{ item.quantity * item.price | number : "1.2-2" }}
+                R$ {{ item.quantidade * item.precoVenda | number : "1.2-2" }}
               </td>
             </tr>
           </tbody>

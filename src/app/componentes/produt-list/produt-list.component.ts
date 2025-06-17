@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ProductService } from '../services/product.service';
 import { Product } from '../../types/types';
+import { NfceService } from '../services/nfce/nfce.service';
+import { ItemNfceDTO, NfceRequestDTO } from 'src/app/types/nfceTypes/nfce';
 
 @Component({
   selector: 'app-produt-list',
@@ -8,19 +10,63 @@ import { Product } from '../../types/types';
   styleUrls: ['./produt-list.component.scss'],
 })
 export class ProdutListComponent {
-  products$ = this.productService.products$;
+  nfce$ = this.nfceService.nfce$;
 
-  constructor(private productService: ProductService) {}
+  constructor(private nfceService: NfceService) {}
 
-  getSubtotal(item: Product): number {
-    return item.quantity * item.price;
+  ngOnInit(): void {
+    this.nfceService.getNfce();
   }
 
-  removeItem(item: Product): void {
-    this.productService.removeItem(item);
+  /**
+   * Lida com a seleção de um produto (ex.: via SearchBarComponent).
+   * @param product Produto selecionado
+   */
+  onProductSelected(product: any): void {
+    const item: ItemNfceDTO = {
+      productId: product.id,
+      codigo_principal: product.codigo_principal,
+      descricao: product.descricao || product.nome, // Usa descrição ou nome
+      quantidade: 1,
+      precoUnitario: product.preco,
+    };
+    this.nfceService.addProduto(item);
   }
 
-  updateQuantity(item: Product, quantity: number): void {
-    this.productService.updateQuantity(item, quantity);
+  /**
+   * Atualiza a quantidade de um item na NFC-e.
+   * @param item Item a ser atualizado
+   */
+  updateQuantity(item: ItemNfceDTO): void {
+    this.nfceService.updateQuantity(item, item.quantidade);
+  }
+
+  /**
+   * Remove um item da NFC-e.
+   * @param item Item a ser removido
+   */
+  removeItem(item: ItemNfceDTO): void {
+    this.nfceService.removeItem(item);
+  }
+
+  /**
+   * Calcula o subtotal de um item (quantidade × preço unitário).
+   * @param item Item da NFC-e
+   * @returns Subtotal
+   */
+  getSubtotal(item: ItemNfceDTO): number {
+    return item.quantidade * item.precoUnitario;
+  }
+
+  /**
+   * Calcula o total geral da NFC-e (soma dos subtotais).
+   * @param nfce Objeto NFC-e
+   * @returns Total geral
+   */
+  getTotalNfce(nfce: NfceRequestDTO): number {
+    return nfce.itens.reduce(
+      (total, item) => total + this.getSubtotal(item),
+      0
+    );
   }
 }

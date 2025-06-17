@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Renderer2, RendererFactory2 } from '@angular/core';
+import { Product } from 'src/app/types/types';
 import { ProductService } from '../services/product.service';
 
 @Component({
@@ -7,7 +8,7 @@ import { ProductService } from '../services/product.service';
   styleUrls: ['./payment-options.component.scss'],
 })
 export class PaymentOptionsComponent {
-  products: { name: string; quantity: number; price: number }[] = [];
+  products: Product[] = [];
   total: number = 0;
   totalWithDiscount: number = 0;
   isModalOpen: boolean = false;
@@ -22,8 +23,14 @@ export class PaymentOptionsComponent {
   installments: number = 1;
   installmentValue: number = 0;
   installmentOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  private renderer: Renderer2;
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    rendererFactory: RendererFactory2
+  ) {
+    this.renderer = rendererFactory.createRenderer(null, null);
+  }
 
   ngOnInit(): void {
     this.productService.products$.subscribe((products) => {
@@ -35,13 +42,13 @@ export class PaymentOptionsComponent {
 
   getTotal(): number {
     return this.products.reduce(
-      (sum, item) => sum + item.quantity * item.price,
+      (sum, item) => sum + item.quantidade * item.precoVenda,
       0
     );
   }
 
-  openPaymentModal(type: string): void {
-    this.paymentType = type;
+  openPaymentModal(formaPagamento: string): void {
+    this.paymentType = formaPagamento;
     this.isModalOpen = true;
     this.isAnonymous = true;
     this.customerName = '';
@@ -53,9 +60,27 @@ export class PaymentOptionsComponent {
     this.installments = 1;
     this.installmentValue = 0;
     this.totalWithDiscount = this.total;
+
+    // Mover o modal para o body
+    setTimeout(() => {
+      const modal = document.getElementById('payment-modal');
+      if (modal) {
+        this.renderer.appendChild(document.body, modal);
+      }
+    }, 0);
   }
 
   closePaymentModal(): void {
+    // Remover o modal do body e voltar para o componente
+    const modal = document.getElementById('payment-modal');
+    if (modal) {
+      const component = document.querySelector('app-payment-options');
+      if (component) {
+        this.renderer.appendChild(component, modal);
+      } else {
+        this.renderer.removeChild(document.body, modal);
+      }
+    }
     this.isModalOpen = false;
   }
 

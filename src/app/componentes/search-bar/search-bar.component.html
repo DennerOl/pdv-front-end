@@ -3,7 +3,7 @@
     type="text"
     placeholder="Buscar produto..."
     [(ngModel)]="searchQuery"
-    (ngModelChange)="filterProducts()"
+    (ngModelChange)="onSearchChange()"
     (keydown.enter)="selectFirstProduct()"
   />
   <button (click)="clearSearch()">
@@ -15,9 +15,10 @@
       *ngFor="let product of filteredProducts"
       (click)="selectProduct(product)"
     >
-      <span class="code">{{ product.code }}</span>
-      <span class="description">{{ product.description }}</span>
-      <span class="price">R$ {{ product.price | number : "1.2-2" }}</span>
+      <span class="code">Codigo: {{ product.id }}</span>
+      <span class="name">Nome: {{ product.nome }}</span>
+      <span class="quantity">Qtd: {{ product.quantidade }}</span>
+      <span class="price">R$ {{ product.precoVenda | number : "1.2-2" }}</span>
     </div>
   </div>
 </div>

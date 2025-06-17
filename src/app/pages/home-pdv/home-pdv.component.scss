@@ -4,62 +4,62 @@
     #ffffff 0%,
     #84b7e9 100%
   ); // Gradiente suave
-  border-radius: 12px; // Bordas mais arredondadas
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); // Sombra mais profunda
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   margin: 20px;
-  padding: 20px; // Mais espaço interno
-  transition: box-shadow 0.3s ease; // Transição suave
+  padding: 20px;
+  transition: box-shadow 0.3s ease;
   font-family: "Roboto", sans-serif;
 
   &:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); // Sombra mais forte no hover
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; // Altura total da viewport
-  background: #f1f5f9; // Fundo cinza claro para contraste
+  min-height: 100vh;
+  background: #f1f5f9;
 }
 
 app-header {
   flex: 0 0 auto;
-  z-index: 10; // Header acima do main
+  z-index: 10; // Mantido, menor que o modal (2000)
 }
 
 .main-content {
   display: flex;
   flex: 1;
-  padding: 15px; // Mais espaço
+  padding: 15px;
   overflow: auto;
 }
 
 .left-section {
   flex: 1;
-  background: #ffffff; // Fundo branco clean
-  border: 1px solid #d1d5db; // Borda suave em vez de preta
-  border-radius: 8px; // Bordas mais arredondadas
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   padding: 15px;
   margin: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Sombra sutil
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px); // Elevação no hover
+    transform: translateY(-2px);
   }
 }
 
 .right-section {
   flex: 2;
   background: #ffffff;
-  border: 1px solid #d1d5db; // Borda suave
+  border: 1px solid #d1d5db;
   border-radius: 8px;
   padding: 15px;
   margin: 10px;
   display: flex;
   flex-direction: column;
-  gap: 15px; // Espaço entre product-list e payment-options
+  gap: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
 
@@ -70,6 +70,7 @@ app-header {
 
 app-footer {
   flex: 0 0 auto;
+  z-index: 10; // Adicionado, menor que o modal (2000)
 }
 
 @media (max-width: 768px) {
