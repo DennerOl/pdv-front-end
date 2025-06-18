@@ -29,6 +29,7 @@ export class ProdutListComponent {
       descricao: product.descricao || product.nome, // Usa descrição ou nome
       quantidade: 1,
       precoUnitario: product.preco,
+      totalItem: product.preco,
     };
     this.nfceService.addProduto(item);
   }

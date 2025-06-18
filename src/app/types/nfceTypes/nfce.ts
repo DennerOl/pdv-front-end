@@ -1,18 +1,25 @@
 export interface NfceRequestDTO {
-  id?: number;
-  itens: ItemNfceDTO[];
-  pagamentos: PagamentoDTO[];
-  destinatario?: DestinatarioDTO;
+  id?: number; // Identificador da NFC-e (opcional, preenchido pelo back-end)
+  itens: ItemNfceDTO[]; // Lista de itens da venda
+  qtdeTotalItens: number; // Quantidade total de itens (soma das quantidades)
+  valorTotalNota: number; // Valor total da nota (soma dos totais dos itens, menos desconto)
+  pagamentos: PagamentoDTO[]; // Lista de pagamentos da venda
+  destinatario?: DestinatarioDTO; // Dados do cliente (opcional, para CPF ou entregas)
   tpEmis: number; // Tipo de emissão (1 = normal, 9 = contingência)
   xJust?: string; // Justificativa para contingência (obrigatório se tpEmis = 9)
 }
 
+/**
+ * Interface para um item da NFC-e.
+ * Representa um produto selecionado na venda.
+ */
 export interface ItemNfceDTO {
   productId: number; // ID do produto no banco (referência à entidade Product)
   codigo_principal?: string; // Código interno do produto (opcional, para identificação)
   descricao: string; // Descrição do produto (ex.: "Pão de Sal")
   quantidade: number; // Quantidade comprada (ex.: 2.0)
   precoUnitario: number; // Preço unitário do produto (ex.: 5.00)
+  totalItem: number; // Subtotal do item (quantidade * precoUnitario)
 }
 
 export interface PagamentoDTO {

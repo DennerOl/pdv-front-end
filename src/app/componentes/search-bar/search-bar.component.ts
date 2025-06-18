@@ -73,6 +73,7 @@ export class SearchBarComponent {
       descricao: product.descricao || product.nome,
       quantidade: 1,
       precoUnitario: product.precoVenda,
+      totalItem: product.precoVenda,
     };
     this.nfceService.addProduto(newProduct);
     this.clearSearch();

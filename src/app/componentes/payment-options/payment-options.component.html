@@ -1,19 +1,19 @@
 <div class="payment-options">
   <div class="total-value">
     <p>Valor Total (R$)</p>
-    <h2>{{ total | number : "1.2-2" }}</h2>
+    <h2>{{ totalWithDiscount | number : "1.2-2" }}</h2>
   </div>
   <div class="buttons">
     <button (click)="openPaymentModal('cash')">F2 - Dinheiro</button>
-    <button (click)="openPaymentModal('check')">F3 - Cheque</button>
     <button (click)="openPaymentModal('card')">F4 - Cartão</button>
+    <button (click)="openPaymentModal('check')">F3 - Cheque</button>
     <button (click)="openPaymentModal('ticket')">F5 - Ticket</button>
     <button (click)="openPaymentModal('installment')">F6 - Parcelado</button>
     <button (click)="openPaymentModal('voucher')">F7 - Vale</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="payment-modal" *ngIf="isModalOpen">
+<div class="modal-overlay" *ngIf="isModalOpen">
   <div class="modal-content">
     <div class="modal-header">
       <h3>
@@ -48,14 +48,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of products">
-              <td data-label="Produto">{{ item.nome }}</td>
+            <tr *ngFor="let item of nfce?.itens">
+              <td data-label="Produto">{{ item.descricao }}</td>
               <td data-label="Quantidade">{{ item.quantidade }}</td>
               <td data-label="Preço Unitário">
-                R$ {{ item.precoVenda | number : "1.2-2" }}
+                R$ {{ item.precoUnitario | number : "1.2-2" }}
               </td>
               <td data-label="Subtotal">
-                R$ {{ item.quantidade * item.precoVenda | number : "1.2-2" }}
+                R$ {{ item.quantidade * item.precoUnitario | number : "1.2-2" }}
               </td>
             </tr>
           </tbody>
@@ -167,7 +167,7 @@
         </p>
       </div>
 
-      <!-- Outros Tipos de Pagamento (Placeholder) -->
+      <!-- Outros Tipos de Pagamento -->
       <div
         class="payment-details"
         *ngIf="paymentType !== 'cash' && paymentType !== 'card'"

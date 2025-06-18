@@ -1,6 +1,9 @@
 import { Component, Renderer2, RendererFactory2 } from '@angular/core';
 import { Product } from 'src/app/types/types';
 import { ProductService } from '../services/product.service';
+import { NfceService } from '../services/nfce/nfce.service';
+import { HttpClient } from '@angular/common/http';
+import { NfceRequestDTO } from 'src/app/types/nfceTypes/nfce';
 
 @Component({
   selector: 'app-payment-options',
@@ -8,9 +11,10 @@ import { ProductService } from '../services/product.service';
   styleUrls: ['./payment-options.component.scss'],
 })
 export class PaymentOptionsComponent {
-  products: Product[] = [];
+  nfce: NfceRequestDTO | null = null;
   total: number = 0;
   totalWithDiscount: number = 0;
+  discount: number = 0;
   isModalOpen: boolean = false;
   paymentType: string = '';
   isAnonymous: boolean = true;
@@ -18,7 +22,6 @@ export class PaymentOptionsComponent {
   customerCpf: string = '';
   amountPaid: number = 0;
   change: number = 0;
-  discount: number = 0;
   cardType: string = 'debit';
   installments: number = 1;
   installmentValue: number = 0;
@@ -26,27 +29,40 @@ export class PaymentOptionsComponent {
   private renderer: Renderer2;
 
   constructor(
-    private productService: ProductService,
+    private nfceService: NfceService,
+    private http: HttpClient,
     rendererFactory: RendererFactory2
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
   ngOnInit(): void {
-    this.productService.products$.subscribe((products) => {
-      this.products = products;
-      this.total = this.getTotal();
-      this.updateDiscount();
+    this.nfceService.nfce$.subscribe((nfce) => {
+      this.nfce = nfce;
+      this.updateTotals();
     });
   }
 
-  getTotal(): number {
-    return this.products.reduce(
-      (sum, item) => sum + item.quantidade * item.precoVenda,
+  /**
+   * Calcula o total e a quantidade total de itens.
+   */
+  updateTotals(): void {
+    if (!this.nfce || !this.nfce.itens) {
+      this.total = 0;
+      this.totalWithDiscount = 0;
+      return;
+    }
+    this.total = this.nfce.itens.reduce(
+      (sum, item) => sum + item.quantidade * item.precoUnitario,
       0
     );
+    this.totalWithDiscount = this.total - this.discount;
   }
 
+  /**
+   * Abre o modal de pagamento e move para o body.
+   * @param formaPagamento Tipo de pagamento
+   */
   openPaymentModal(formaPagamento: string): void {
     this.paymentType = formaPagamento;
     this.isModalOpen = true;
@@ -59,31 +75,37 @@ export class PaymentOptionsComponent {
     this.cardType = 'debit';
     this.installments = 1;
     this.installmentValue = 0;
-    this.totalWithDiscount = this.total;
+    this.updateTotals();
 
     // Mover o modal para o body
     setTimeout(() => {
-      const modal = document.getElementById('payment-modal');
+      const modal = document.querySelector(
+        'app-payment-options .modal-overlay'
+      );
       if (modal) {
         this.renderer.appendChild(document.body, modal);
       }
     }, 0);
   }
 
+  /**
+   * Fecha o modal de pagamento e retorna ao componente.
+   */
   closePaymentModal(): void {
-    // Remover o modal do body e voltar para o componente
-    const modal = document.getElementById('payment-modal');
+    // Retornar o modal ao componente
+    const modal = document.querySelector('.modal-overlay');
     if (modal) {
       const component = document.querySelector('app-payment-options');
       if (component) {
         this.renderer.appendChild(component, modal);
-      } else {
-        this.renderer.removeChild(document.body, modal);
       }
     }
     this.isModalOpen = false;
   }
 
+  /**
+   * Alterna entre cliente identificado e anônimo.
+   */
   toggleAnonymous(): void {
     if (this.isAnonymous) {
       this.customerName = '';
@@ -91,6 +113,9 @@ export class PaymentOptionsComponent {
     }
   }
 
+  /**
+   * Atualiza o desconto e recalcula os totais.
+   */
   updateDiscount(): void {
     if (this.discount < 0 || this.discount > this.total) {
       this.discount = 0;
@@ -100,15 +125,24 @@ export class PaymentOptionsComponent {
     this.calculateInstallmentValue();
   }
 
+  /**
+   * Calcula o troco para pagamento em dinheiro.
+   */
   calculateChange(): void {
     this.change = this.amountPaid - this.totalWithDiscount;
   }
 
+  /**
+   * Reseta as parcelas ao mudar o tipo de cartão.
+   */
   resetInstallments(): void {
     this.installments = 1;
     this.calculateInstallmentValue();
   }
 
+  /**
+   * Calcula o valor de cada parcela para pagamento com cartão de crédito.
+   */
   calculateInstallmentValue(): void {
     if (this.cardType === 'credit' && this.installments > 0) {
       this.installmentValue = this.totalWithDiscount / this.installments;
@@ -117,6 +151,9 @@ export class PaymentOptionsComponent {
     }
   }
 
+  /**
+   * Verifica se o pagamento é válido.
+   */
   isPaymentValid(): boolean {
     if (this.paymentType === 'cash') {
       return this.amountPaid >= this.totalWithDiscount;
@@ -127,33 +164,79 @@ export class PaymentOptionsComponent {
         (this.cardType === 'credit' && this.installments >= 1)
       );
     }
-    return true; // Outros tipos (em desenvolvimento)
+    return false;
   }
 
+  /**
+   * Confirma o pagamento e envia o NfceRequestDTO ao back-end.
+   */
   confirmPayment(): void {
-    const saleData = {
-      products: this.products,
-      total: this.total,
-      discount: this.discount,
-      totalWithDiscount: this.totalWithDiscount,
-      paymentType: this.paymentType,
-      customer: this.isAnonymous
-        ? 'Consumidor não identificado'
-        : { name: this.customerName, cpf: this.customerCpf },
-      change: this.paymentType === 'cash' ? this.change : 0,
-      cardType: this.paymentType === 'card' ? this.cardType : null,
-      installments:
-        this.paymentType === 'card' && this.cardType === 'credit'
-          ? this.installments
-          : 0,
-      installmentValue:
-        this.paymentType === 'card' && this.cardType === 'credit'
-          ? this.installmentValue
-          : 0,
+    if (!this.nfce || !this.nfce.itens.length) {
+      alert('Nenhum item na NFC-e.');
+      return;
+    }
+
+    // Monta o NfceRequestDTO
+    const nfceRequest: NfceRequestDTO = {
+      ...this.nfce,
+      qtdeTotalItens: this.nfce.itens.reduce(
+        (sum, item) => sum + item.quantidade,
+        0
+      ),
+      valorTotalNota: this.totalWithDiscount,
+      itens: this.nfce.itens.map((item) => ({
+        ...item,
+        totalItem: item.quantidade * item.precoUnitario,
+      })),
+      pagamentos: [
+        {
+          tPag: this.getTPagCode(),
+          vPag: this.totalWithDiscount,
+        },
+      ],
+      destinatario: this.isAnonymous
+        ? undefined
+        : {
+            cpf: this.customerCpf,
+            xNome: this.customerName,
+            cMun: 3304557, // Rio de Janeiro
+            uf: 'RJ',
+          },
     };
-    console.log('Venda confirmada:', saleData);
-    // TODO: Enviar saleData para o backend (POST /api/sale)
-    this.productService.clearProducts(); // Limpa o carrinho
-    this.closePaymentModal();
+
+    // Envia ao back-end
+    this.http.post('/api/v1/nfce', nfceRequest).subscribe({
+      next: (response) => {
+        console.log('NFC-e enviada com sucesso:', response);
+        this.nfceService.clearNfce();
+        this.closePaymentModal();
+      },
+      error: (error) => {
+        console.error('Erro ao enviar NFC-e:', error);
+        alert('Erro ao finalizar a NFC-e.');
+      },
+    });
+  }
+
+  /**
+   * Mapeia o tipo de pagamento para o código tPag da NFC-e.
+   */
+  private getTPagCode(): string {
+    switch (this.paymentType) {
+      case 'cash':
+        return '01';
+      case 'card':
+        return this.cardType === 'debit' ? '03' : '04';
+      case 'check':
+        return '02';
+      case 'ticket':
+        return '10';
+      case 'installment':
+        return '04';
+      case 'voucher':
+        return '99';
+      default:
+        return '99';
+    }
   }
 }

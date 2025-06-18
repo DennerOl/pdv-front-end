@@ -1,9 +1,5 @@
 .card {
-  background: linear-gradient(
-    135deg,
-    #ffffff 0%,
-    #84b7e9 100%
-  ); // Gradiente suave
+  background: linear-gradient(135deg, #ffffff 0%, #84b7e9 100%);
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   margin: 20px;
@@ -21,11 +17,12 @@
   flex-direction: column;
   min-height: 100vh;
   background: #f1f5f9;
+  position: relative; // Evita contexto de empilhamento indesejado
 }
 
 app-header {
   flex: 0 0 auto;
-  z-index: 10; // Mantido, menor que o modal (2000)
+  z-index: 10; // Baixo para não interferir no modal
 }
 
 .main-content {
@@ -43,10 +40,10 @@ app-header {
   padding: 15px;
   margin: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  transition: margin-top 0.2s ease; // Substitui transform
 
   &:hover {
-    transform: translateY(-2px);
+    margin-top: -2px; // Substitui transform para evitar contexto de empilhamento
   }
 }
 
@@ -61,16 +58,16 @@ app-header {
   flex-direction: column;
   gap: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  transition: margin-top 0.2s ease; // Substitui transform
 
   &:hover {
-    transform: translateY(-2px);
+    margin-top: -2px; // Substitui transform para evitar contexto de empilhamento
   }
 }
 
 app-footer {
   flex: 0 0 auto;
-  z-index: 10; // Adicionado, menor que o modal (2000)
+  z-index: 10; // Baixo para não interferir no modal
 }
 
 @media (max-width: 768px) {
