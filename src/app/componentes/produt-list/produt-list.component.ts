@@ -19,22 +19,6 @@ export class ProdutListComponent {
   }
 
   /**
-   * Lida com a seleção de um produto (ex.: via SearchBarComponent).
-   * @param product Produto selecionado
-   */
-  onProductSelected(product: any): void {
-    const item: ItemNfceDTO = {
-      productId: product.id,
-      codigo_principal: product.codigo_principal,
-      descricao: product.descricao || product.nome, // Usa descrição ou nome
-      quantidade: 1,
-      precoUnitario: product.preco,
-      totalItem: product.preco,
-    };
-    this.nfceService.addProduto(item);
-  }
-
-  /**
    * Atualiza a quantidade de um item na NFC-e.
    * @param item Item a ser atualizado
    */
@@ -57,17 +41,5 @@ export class ProdutListComponent {
    */
   getSubtotal(item: ItemNfceDTO): number {
     return item.quantidade * item.precoUnitario;
-  }
-
-  /**
-   * Calcula o total geral da NFC-e (soma dos subtotais).
-   * @param nfce Objeto NFC-e
-   * @returns Total geral
-   */
-  getTotalNfce(nfce: NfceRequestDTO): number {
-    return nfce.itens.reduce(
-      (total, item) => total + this.getSubtotal(item),
-      0
-    );
   }
 }

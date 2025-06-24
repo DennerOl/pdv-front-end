@@ -173,6 +173,7 @@ export class PaymentOptionsComponent {
   confirmPayment(): void {
     if (!this.nfce || !this.nfce.itens.length) {
       alert('Nenhum item na NFC-e.');
+      console.error('NFC-e inválida ou sem itens.' + this.nfce);
       return;
     }
 
@@ -195,7 +196,17 @@ export class PaymentOptionsComponent {
         },
       ],
       destinatario: this.isAnonymous
-        ? undefined
+        ? {
+            cpf: 'XXXXXXXXXXX',
+            cnpj: 'XXXXXXXXXXX',
+            xNome: 'consumidor não identificado',
+            logradouro: 'xxxxxxxxxxxxx',
+            numero: '0',
+            bairro: 'xxxxxxxxxxxxx',
+            cMun: 3304557,
+            uf: 'RJ',
+            cep: '00000000',
+          }
         : {
             cpf: this.customerCpf,
             xNome: this.customerName,
@@ -203,9 +214,9 @@ export class PaymentOptionsComponent {
             uf: 'RJ',
           },
     };
-
+    console.log('NFC-e Request:', nfceRequest);
     // Envia ao back-end
-    this.http.post('/api/v1/nfce', nfceRequest).subscribe({
+    this.nfceService.enviaNfce(nfceRequest).subscribe({
       next: (response) => {
         console.log('NFC-e enviada com sucesso:', response);
         this.nfceService.clearNfce();
@@ -233,6 +244,8 @@ export class PaymentOptionsComponent {
         return '10';
       case 'installment':
         return '04';
+      case 'pix':
+        return '05';
       case 'voucher':
         return '99';
       default:

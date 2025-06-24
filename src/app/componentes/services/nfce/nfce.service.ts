@@ -1,18 +1,25 @@
 import { Injectable } from '@angular/core';
-import { NfceLocalStorageService } from './nfce-local-storage.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ItemNfceDTO, NfceRequestDTO } from 'src/app/types/nfceTypes/nfce';
-import { BehaviorSubject } from 'rxjs';
+import { NfceLocalStorageService } from './nfce-local-storage.service';
+import { environment } from 'src/environments/environment.development';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NfceService {
+  private API: string = environment.API;
+
   private nfceSubject = new BehaviorSubject<NfceRequestDTO>(
     this.getInicialNfce()
   );
   nfce$ = this.nfceSubject.asObservable();
 
-  constructor(private nfceLocalStorage: NfceLocalStorageService) {}
+  constructor(
+    private nfceLocalStorage: NfceLocalStorageService,
+    private http: HttpClient
+  ) {}
 
   /**
    * Obtém o objeto inicial da NFC-e, do localStorage ou um novo padrão.
@@ -27,7 +34,9 @@ export class NfceService {
         pagamentos: [],
         tpEmis: 1, // Tipo de emissão padrão (1 = normal)
         xJust: '', // Justificativa vazia por padrão
-        destinatario: undefined, // Destinatário opcional
+        destinatario: {
+          xNome: 'consumidor não identificado',
+        }, // Destinatário opcional
       }
     );
   }
@@ -138,5 +147,9 @@ export class NfceService {
   clearNfce(): void {
     const initialNfce = this.getInicialNfce();
     this.saveNfce(initialNfce);
+  }
+
+  enviaNfce(nfce: NfceRequestDTO): Observable<NfceRequestDTO> {
+    return this.http.post<NfceRequestDTO>(`${this.API}/nfce`, nfce);
   }
 }

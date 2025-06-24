@@ -4,12 +4,13 @@
     <h2>{{ totalWithDiscount | number : "1.2-2" }}</h2>
   </div>
   <div class="buttons">
-    <button (click)="openPaymentModal('cash')">F2 - Dinheiro</button>
-    <button (click)="openPaymentModal('card')">F4 - Cartão</button>
-    <button (click)="openPaymentModal('check')">F3 - Cheque</button>
-    <button (click)="openPaymentModal('ticket')">F5 - Ticket</button>
-    <button (click)="openPaymentModal('installment')">F6 - Parcelado</button>
-    <button (click)="openPaymentModal('voucher')">F7 - Vale</button>
+    <button (click)="openPaymentModal('cash')">- Dinheiro</button>
+    <button (click)="openPaymentModal('pix')">- Pix</button>
+    <button (click)="openPaymentModal('card')">- Cartão</button>
+    <button (click)="openPaymentModal('check')">- Cheque</button>
+    <button (click)="openPaymentModal('ticket')">- Ticket</button>
+    <button (click)="openPaymentModal('installment')">- Parcelado</button>
+    <button (click)="openPaymentModal('voucher')">- Vale</button>
   </div>
 </div>
 
@@ -21,6 +22,8 @@
         {{
           paymentType === "cash"
             ? "Dinheiro"
+            : paymentType === "pix"
+            ? "pix"
             : paymentType === "card"
             ? "Cartão"
             : paymentType === "check"
@@ -131,6 +134,37 @@
         </p>
       </div>
 
+      <!-- Pagamento em pix -->
+      <div class="payment-details" *ngIf="paymentType === 'pix'">
+        <h4>Pagamento em Pix</h4>
+        <label>
+          Desconto (R$):
+          <input
+            type="number"
+            [(ngModel)]="discount"
+            (ngModelChange)="updateDiscount()"
+            min="0"
+            step="0.01"
+          />
+        </label>
+        <label>
+          Valor Pago (R$):
+          <input
+            type="number"
+            [(ngModel)]="amountPaid"
+            (ngModelChange)="calculateChange()"
+            min="0"
+            step="0.01"
+          />
+        </label>
+        <p *ngIf="amountPaid >= totalWithDiscount">
+          Troco: R$ {{ change | number : "1.2-2" }}
+        </p>
+        <p *ngIf="amountPaid < totalWithDiscount" class="error">
+          Valor insuficiente
+        </p>
+      </div>
+
       <!-- Pagamento em Cartão -->
       <div class="payment-details" *ngIf="paymentType === 'card'">
         <h4>Pagamento em Cartão</h4>
@@ -170,7 +204,11 @@
       <!-- Outros Tipos de Pagamento -->
       <div
         class="payment-details"
-        *ngIf="paymentType !== 'cash' && paymentType !== 'card'"
+        *ngIf="
+          paymentType !== 'cash' &&
+          paymentType !== 'card' &&
+          paymentType !== 'pix'
+        "
       >
         <h4>
           Pagamento em
