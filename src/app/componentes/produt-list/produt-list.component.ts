@@ -3,6 +3,7 @@ import { ProductService } from '../services/product.service';
 import { Product } from '../../types/types';
 import { NfceService } from '../services/nfce/nfce.service';
 import { ItemNfceDTO, NfceRequestDTO } from 'src/app/types/nfceTypes/nfce';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-produt-list',
@@ -10,12 +11,25 @@ import { ItemNfceDTO, NfceRequestDTO } from 'src/app/types/nfceTypes/nfce';
   styleUrls: ['./produt-list.component.scss'],
 })
 export class ProdutListComponent {
-  nfce$ = this.nfceService.nfce$;
+  nfce: NfceRequestDTO; // Propriedade para armazenar o estado atual
+  private subscription: Subscription = new Subscription();
 
-  constructor(private nfceService: NfceService) {}
+  constructor(private nfceService: NfceService) {
+    this.nfce = this.nfceService.getInicialNfce();
+  }
 
   ngOnInit(): void {
-    this.nfceService.getNfce();
+    // Assinar o nfce$ para atualizar o estado local
+    this.subscription.add(
+      this.nfceService.nfce$.subscribe((nfce) => {
+        this.nfce = nfce;
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    // Assinar o nfce$ para atualizar o estado local
+    this.subscription.unsubscribe();
   }
 
   /**

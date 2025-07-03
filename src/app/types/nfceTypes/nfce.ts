@@ -28,6 +28,7 @@ export interface PagamentoDTO {
 }
 
 export interface DestinatarioDTO {
+  id?:number;
   cpf?: string;
   cnpj?: string;
   xNome?: string;

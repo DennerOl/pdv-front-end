@@ -4,6 +4,7 @@ import { ProductService } from '../services/product.service';
 import { NfceService } from '../services/nfce/nfce.service';
 import { HttpClient } from '@angular/common/http';
 import { NfceRequestDTO } from 'src/app/types/nfceTypes/nfce';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-payment-options',
@@ -27,6 +28,7 @@ export class PaymentOptionsComponent {
   installmentValue: number = 0;
   installmentOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   private renderer: Renderer2;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private nfceService: NfceService,
@@ -34,13 +36,20 @@ export class PaymentOptionsComponent {
     rendererFactory: RendererFactory2
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);
+    this.nfce = this.nfceService.getInicialNfce();
   }
 
   ngOnInit(): void {
+    this.nfceService.clearNfce(); // Limpa a NFC-e após carregar
     this.nfceService.nfce$.subscribe((nfce) => {
       this.nfce = nfce;
       this.updateTotals();
     });
+  }
+
+  ngOnDestroy(): void {
+    // Cancelar assinaturas para evitar memory leaks
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -197,15 +206,16 @@ export class PaymentOptionsComponent {
       ],
       destinatario: this.isAnonymous
         ? {
-            cpf: 'XXXXXXXXXXX',
-            cnpj: 'XXXXXXXXXXX',
-            xNome: 'consumidor não identificado',
-            logradouro: 'xxxxxxxxxxxxx',
+            id: 1,
+            cpf: '',
+            cnpj: '',
+            xNome: '',
+            logradouro: '',
             numero: '0',
-            bairro: 'xxxxxxxxxxxxx',
+            bairro: '',
             cMun: 3304557,
             uf: 'RJ',
-            cep: '00000000',
+            cep: '',
           }
         : {
             cpf: this.customerCpf,
@@ -216,19 +226,37 @@ export class PaymentOptionsComponent {
     };
     console.log('NFC-e Request:', nfceRequest);
     // Envia ao back-end
-    this.nfceService.enviaNfce(nfceRequest).subscribe({
-      next: (response) => {
-        console.log('NFC-e enviada com sucesso:', response);
-        this.nfceService.clearNfce();
-        this.closePaymentModal();
-      },
-      error: (error) => {
-        console.error('Erro ao enviar NFC-e:', error);
-        alert('Erro ao finalizar a NFC-e.');
-      },
-    });
+    this.subscription.add(
+      this.nfceService.enviaNfce(nfceRequest).subscribe({
+        next: (response) => {
+          console.log('NFC-e enviada com sucesso:', response);
+          this.closePaymentModal();
+          this.resetAll();
+        },
+        error: (error) => {
+          console.error('Erro ao enviar NFC-e:', error);
+          alert('Erro ao finalizar a NFC-e.');
+        },
+      })
+    );
   }
 
+  private resetAll(): void {
+    this.total = 0;
+    this.totalWithDiscount = 0;
+    this.discount = 0;
+    this.isModalOpen = false;
+    this.paymentType = '';
+    this.isAnonymous = true;
+    this.customerName = '';
+    this.customerCpf = '';
+    this.amountPaid = 0;
+    this.change = 0;
+    this.cardType = 'debit';
+    this.installments = 1;
+    this.installmentValue = 0;
+    this.updateTotals();
+  }
   /**
    * Mapeia o tipo de pagamento para o código tPag da NFC-e.
    */

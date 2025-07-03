@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, tap } from 'rxjs';
 import { ItemNfceDTO, NfceRequestDTO } from 'src/app/types/nfceTypes/nfce';
 import { NfceLocalStorageService } from './nfce-local-storage.service';
 import { environment } from 'src/environments/environment.development';
@@ -24,7 +24,7 @@ export class NfceService {
   /**
    * Obtém o objeto inicial da NFC-e, do localStorage ou um novo padrão.
    */
-  private getInicialNfce(): NfceRequestDTO {
+  public getInicialNfce(): NfceRequestDTO {
     const savedNfce = this.nfceLocalStorage.get();
     return (
       savedNfce || {
@@ -145,11 +145,21 @@ export class NfceService {
    * Limpa a NFC-e após o envio.
    */
   clearNfce(): void {
-    const initialNfce = this.getInicialNfce();
-    this.saveNfce(initialNfce);
+    this.nfceLocalStorage.clear();
+    this.nfceSubject.next(this.getInicialNfce());
   }
 
   enviaNfce(nfce: NfceRequestDTO): Observable<NfceRequestDTO> {
-    return this.http.post<NfceRequestDTO>(`${this.API}/nfce`, nfce);
+    return this.http.post<NfceRequestDTO>(`${this.API}/nfce`, nfce).pipe(
+      tap((response: NfceRequestDTO) => {
+        // Após sucesso, resetar o estado para inicial
+        this.nfceSubject.next(this.getInicialNfce());
+        this.clearNfce(); // Limpa o localStorage
+      }),
+      catchError((error) => {
+        console.error('Erro ao enviar NFC-e:', error);
+        throw error; // Propagar o erro para o componente
+      })
+    );
   }
 }
